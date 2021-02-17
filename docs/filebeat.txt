@@ -1,0 +1,26 @@
+# 在elastic官网下载filebeat并进行安装
+tar -zxvf filebeat-7.10.1-linux-x86_64.tar.gz -C /usr/local/
+
+# 重命名
+cd /usr/local/
+mv filebeat-7.10.1-linux-x86_64/ filebeat-7.10.1
+
+# 配置filebeat.yml，filebeat.yml将在后面单独提供
+vim /usr/local/filebeat-7.10.1/filebeat.yml
+
+# 后台启动filebeat，启动日志输出到filebeat.log
+nohup ./filebeat > filebeat.log &
+
+# 验证
+ps -ef | grep filebeat
+
+
+# 启动kafka
+bin/kafka-server-start.sh -daemon config/server.propertie
+
+# 查看topic列表：
+bin/kafka-topics.sh --zookeeper localhost:2181 --list
+
+# 创建topic
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic app-log-elk --partitions 1  --replication-factor 1
+bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic error-log-elk --partitions 1  --replication-factor 1
